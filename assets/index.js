@@ -162,22 +162,28 @@ imagesSection.innerText = 'Images';
 resultContainer.appendChild(imagesSection);
 
 const imagesList = document.createElement('ol');
-imagesList.innerHTML = `
-<li><span id="highlight">Total Images: </span> <span id="data">${data.images.total}</span></li>
 
-${data.images.total > 0 ? `<div id="images">
-${data.images.images_list.map(img => `
-<p><span id="highlight">Image Path: </span> ${img.image}</p>
-<p><span id="highlight">Alt: </span> ${img.alt_text}</p><br>`
-).join('')}
-</div>` : ''}
+if (data.images.total === 0) {
+    imagesList.innerHTML = `<li>No images found on this page</li>`;
+} else {
+    imagesList.innerHTML = `
+    <li><span id="highlight">Total Images: </span> <span id="data">${data.images.total}</span></li>
 
-${
-data.images.images_list.length !== data.images.images_list.filter(img => img.alt_text).length
-? `<li class="fail">Some of your images has no alt text. Include Alt text for each image on your page</li>`
-: `<li class="pass">All of your images has Alt text</li>`
+    ${data.images.total > 0 ? `<div id="images">
+    ${data.images.images_list.map(img => `
+    <p><span id="highlight">Image Path: </span> ${img.image}</p>
+    <p><span id="highlight">Alt: </span> ${img.alt_text}</p><br>`
+    ).join('')}
+    </div>` : ''}
+
+    ${
+        data.images.images_list.length !== data.images.images_list.filter(img => img.alt_text).length
+        ? `<li class="fail">Some of your images have no Alt text. Include Alt text for each image on your page</li>`
+        : (data.images.total !== data.images.images_list.filter(img => img.alt_text).length)
+            ? `<li class="fail">Some of your images have no Alt text. Include Alt text for each image on your page</li>`
+            : `<li class="pass">All of your images have Alt text</li>`
+    }`;
 }
-`;
 
 resultContainer.appendChild(imagesList);
 
@@ -249,7 +255,7 @@ resultContainer.appendChild(imagesList);
 
           // Robot.txt
           const robotSection = document.createElement('h2');
-          robotSection.innerText = 'Google Analytics';
+          robotSection.innerText = 'Robots.txt';
           resultContainer.appendChild(robotSection);
           const robotCheck = document.createElement('ol');
           robotCheck.innerHTML = `
@@ -271,16 +277,7 @@ resultContainer.appendChild(imagesList);
                                 <li><span id="highlight">OG URL: </span> <span id="data"><a id="data" href="${data.og_tags.og_url}">${data.og_tags.og_url}</a></span></li>`;
         resultContainer.appendChild(ogTagsList);
 
-        // Display page data
-        const pageDataSection = document.createElement('h2');
-        pageDataSection.innerText = 'Page Data';
-        resultContainer.appendChild(pageDataSection);
-
-        const pageDataList = document.createElement('ol');
-        pageDataList.innerHTML = `<li><span id="highlight">Page Size: </span> <span id="data">${data.page.page_size / 1000} MB</span></li>
-                                  <li><span id="highlight">Total Words in Page: </span> <span id="data">${data.page.page_words}</span></li>
-                                  <li><span id="highlight">Total Paragraphs: </span> <span id="data">${data.page.total_para}</span></li>`;
-        resultContainer.appendChild(pageDataList);
+        
 
         const socialMediaLinksSection = document.createElement('h2');
         socialMediaLinksSection.innerText = 'Social Media Links';
